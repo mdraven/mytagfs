@@ -1,22 +1,22 @@
 /*
- * TagsDir.h
+ * StatsDir.h
  *
  *  Created on: Feb 16, 2014
  *      Author: mdraven
  */
 
-#ifndef TAGSDIR_H_
-#define TAGSDIR_H_
+#ifndef STATSDIR_H_
+#define STATSDIR_H_
 
 #include "Dir.h"
 #include "tagsistant/Tagsistant.h"
 
 namespace mytagfsdir {
 
-class TagsDir : public Dir {
+class StatsDir : public Dir {
 	tagsistant::Tagsistant& tagsistant;
 public:
-	TagsDir(tagsistant::Tagsistant& tagsistant);
+	StatsDir(tagsistant::Tagsistant& tagsistant);
 
 	virtual int getattr(const char *path, struct stat *stbuf) override;
 	virtual int readdir(const char *path, void *buf, fuse_fill_dir_t filler,
@@ -24,13 +24,13 @@ public:
 	virtual int readlink(const char *path, char *buf, size_t bufsiz) override;
 	virtual int open(const char *path, struct fuse_file_info *fi) override;
 	virtual int read(const char *path, char *buf, size_t size, off_t offset,
-			struct fuse_file_info *fi) override;
+				struct fuse_file_info *fi) override;
 
 	virtual const std::string& getDirName() const;
 
-	virtual ~TagsDir();
+	virtual ~StatsDir();
 };
 
 } /* namespace mytagfsdir */
 
-#endif /* TAGSDIR_H_ */
+#endif /* STATSDIR_H_ */

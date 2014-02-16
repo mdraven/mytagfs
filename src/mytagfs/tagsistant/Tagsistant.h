@@ -38,6 +38,7 @@ namespace tagsistant {
         bool checkTagnames(const std::vector<std::string>& maybe_tagnames) const;
         std::vector<FilenameAndPath> getPathsToFiles(const std::vector<std::string>& tagnames) const;
         boost::optional<FilenameAndPath> isFileContainsInTags(const std::vector<std::string>& tagnames, const std::string& filename) const;
+        const std::string& getTagsistantDirectory() const;
 
         virtual ~Tagsistant();
     };

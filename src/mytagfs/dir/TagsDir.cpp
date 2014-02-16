@@ -181,6 +181,15 @@ int TagsDir::readlink(const char* path, char* buf, size_t bufsiz) {
 	return -ENOENT;
 }
 
+int TagsDir::open(const char* path, struct fuse_file_info* fi) {
+	return -ENOENT;
+}
+
+int TagsDir::read(const char* path, char* buf, size_t size, off_t offset,
+		struct fuse_file_info* fi) {
+	return -ENOENT;
+}
+
 const std::string& TagsDir::getDirName() const {
 	static std::string dir_name("tags");
 	return dir_name;

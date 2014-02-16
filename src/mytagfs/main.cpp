@@ -1,6 +1,7 @@
 
 #include "tagsistant/Tagsistant.h"
 #include "dir/TagsDir.h"
+#include "dir/StatsDir.h"
 
 #include <iostream>
 #include <memory>
@@ -50,6 +51,25 @@ int mytagfs_readlink(const char *path, char *buf, size_t bufsiz) {
 	for(auto dir : global_dirs)
 		if(dir->readlink(path, buf, bufsiz) == 0)
 			return 0;
+
+	return -ENOENT;
+}
+
+int mytagfs_open(const char *path, struct fuse_file_info *fi) {
+	for(auto dir : global_dirs)
+		if(dir->open(path, fi) == 0)
+			return 0;
+
+	return -ENOENT;
+}
+
+int mytagfs_read(const char* path, char* buf, size_t size, off_t offset,
+		struct fuse_file_info* fi) {
+	for(auto dir : global_dirs) {
+		int ret = dir->read(path, buf, size, offset, fi);
+		if(ret >= 0)
+			return ret;
+	}
 
 	return -ENOENT;
 }
@@ -108,10 +128,15 @@ int main(int argc, const char* argv[]) {
 	mytagfsdir::TagsDir tags_dir(tagsistant);
 	global_dirs.push_back(&tags_dir);
 
+	mytagfsdir::StatsDir stats_dir(tagsistant);
+	global_dirs.push_back(&stats_dir);
+
 	fuse_operations ops = {0};
 	ops.getattr = mytagfs_getattr;
 	ops.readdir = mytagfs_readdir;
 	ops.readlink = mytagfs_readlink;
+	ops.open = mytagfs_open;
+	ops.read = mytagfs_read;
 
 	return fuse_main(fuse_argv.size(), const_cast<char**>(fuse_argv.data()), &ops, NULL);
 }

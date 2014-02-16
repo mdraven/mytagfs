@@ -129,6 +129,11 @@ namespace tagsistant {
         return true;
     }
 
+    const std::string& Tagsistant::getTagsistantDirectory() const {
+    	return tagsistant_directory;
+    }
+
     Tagsistant::~Tagsistant()
     {}
 }
+

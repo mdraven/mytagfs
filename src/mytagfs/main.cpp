@@ -54,9 +54,10 @@ int mytagfs_readlink(const char *path, char *buf, size_t bufsiz) {
 	return -ENOENT;
 }
 
-int main(int argc, const char* argv[]) {
+bool processArgs(int argc, const char* argv[], std::string& repository_path,
+		std::vector<std::string>& unrecognized_args) {
 	if(argc == 0)
-		return -1;
+		return false;
 
 	namespace po = boost::program_options;
 
@@ -74,19 +75,29 @@ int main(int argc, const char* argv[]) {
 
 		std::cout << desc << std::endl;
 
-		return 0;
+		return false;
 	}
-
-	std::unique_ptr<tagsistant::Tagsistant> tagsistant;
 
 	if(vm.count("repository"))
-		tagsistant.reset(new tagsistant::Tagsistant(vm["repository"].as<std::string>()));
+		repository_path = vm["repository"].as<std::string>();
 	else {
 		std::cout << "Repository was not set" << std::endl;
-		return -1;
+		return false;
 	}
 
-	std::vector<std::string> unrecognized = po::collect_unrecognized(parsed.options, po::include_positional);
+	unrecognized_args = po::collect_unrecognized(parsed.options, po::include_positional);
+
+	return true;
+}
+
+int main(int argc, const char* argv[]) {
+	std::string repository_path;
+	std::vector<std::string> unrecognized;
+
+	if(!processArgs(argc, argv, repository_path, unrecognized))
+		return EXIT_FAILURE;
+
+	tagsistant::Tagsistant tagsistant(repository_path);
 
 	std::vector<const char*> fuse_argv;
 	fuse_argv.push_back(argv[0]);
@@ -94,7 +105,7 @@ int main(int argc, const char* argv[]) {
 	for(const auto& v : unrecognized)
 		fuse_argv.push_back(v.c_str());
 
-	mytagfsdir::TagsDir tags_dir(*tagsistant);
+	mytagfsdir::TagsDir tags_dir(tagsistant);
 	global_dirs.push_back(&tags_dir);
 
 	fuse_operations ops = {0};

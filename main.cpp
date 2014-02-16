@@ -199,7 +199,7 @@ int main(int argc, const char* argv[]) {
 	namespace po = boost::program_options;
 
 	po::options_description desc("Allowed options");
-	desc.add_options()("help", "produce help message")
+	desc.add_options()("help,h", "produce help message")
 	    			("repository", po::value<std::string>(), "specify the location of repository");
 
 	po::variables_map vm;

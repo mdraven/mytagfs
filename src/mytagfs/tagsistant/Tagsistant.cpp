@@ -18,9 +18,9 @@ namespace tagsistant {
         soci::session sql(soci::sqlite3, tagsistant_directory + '/' + "tags.sql");
 
 
-        cacheTagsFromDB();
-        cacheObjectsFromDB();
-        cacheTaggingFromDB();
+        cacheTagsFromDB(sql);
+        cacheObjectsFromDB(sql);
+        cacheTaggingFromDB(sql);
     }
 
     std::vector<std::string> Tagsistant::getTagnames() const {
@@ -61,13 +61,7 @@ namespace tagsistant {
         return boost::optional<FilenameAndPath>();
     }
 
-    void Tagsistant::rehashCache() {
-        cacheTagsFromDB();
-        cacheObjectsFromDB();
-        cacheTaggingFromDB();
-    }
-
-    void Tagsistant::cacheObjectsFromDB() {
+    void Tagsistant::cacheObjectsFromDB(soci::session& sql) {
         soci::rowset<soci::row> row = (sql.prepare << "select inode, objectname from objects");
 
         objects.clear();
@@ -109,7 +103,7 @@ namespace tagsistant {
         return ret;
     }
 
-    void Tagsistant::cacheTagsFromDB() {
+    void Tagsistant::cacheTagsFromDB(soci::session& sql) {
         soci::rowset<soci::row> row = (sql.prepare << "select tag_id, tagname from tags");
 
         tags->clear();
@@ -117,7 +111,7 @@ namespace tagsistant {
             tags->add(v.get<std::string>(1),v.get<int>(0));
     }
 
-    void Tagsistant::cacheTaggingFromDB() {
+    void Tagsistant::cacheTaggingFromDB(soci::session& sql) {
         soci::rowset<soci::row> inodes = (sql.prepare << "select inode, tag_id from tagging");
 
         tagging.clear();

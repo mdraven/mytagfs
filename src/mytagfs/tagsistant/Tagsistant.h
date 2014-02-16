@@ -26,9 +26,9 @@ namespace tagsistant {
 
         std::vector<int> getInodeIntersectionFromTagnames(const std::vector<std::string>& tagnames) const;
 
-        void cacheTagsFromDB();
-        void cacheObjectsFromDB();
-        void cacheTaggingFromDB();
+        void cacheTagsFromDB(soci::session& sql);
+        void cacheObjectsFromDB(soci::session& sql);
+        void cacheTaggingFromDB(soci::session& sql);
 
     public:
         Tagsistant(const std::string& tagsistant_directory);
@@ -38,8 +38,6 @@ namespace tagsistant {
         bool checkTagnames(const std::vector<std::string>& maybe_tagnames) const;
         std::vector<FilenameAndPath> getPathsToFiles(const std::vector<std::string>& tagnames) const;
         boost::optional<FilenameAndPath> isFileContainsInTags(const std::vector<std::string>& tagnames, const std::string& filename) const;
-
-        void rehashCache();
 
         virtual ~Tagsistant();
     };

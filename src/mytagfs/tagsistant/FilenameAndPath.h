@@ -8,7 +8,7 @@
 namespace tagsistant {
 
     class FilenameAndPath {
-        friend void Tagsistant::cacheObjectsFromDB();
+        friend void Tagsistant::cacheObjectsFromDB(soci::session& sql);
 
         std::string filename;
         int inode;

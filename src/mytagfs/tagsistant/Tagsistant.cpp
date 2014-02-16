@@ -11,10 +11,12 @@ namespace tagsistant {
 
     Tagsistant::Tagsistant(const std::string& tagsistant_directory) :
         tagsistant_directory(tagsistant_directory),
-        sql(soci::sqlite3, tagsistant_directory + '/' + "tags.sql"),
         tags(new Tags){
         if(tagsistant_directory.back() == '/')
             throw std::runtime_error("Path to the directory ends with /");
+
+        soci::session sql(soci::sqlite3, tagsistant_directory + '/' + "tags.sql");
+
 
         cacheTagsFromDB();
         cacheObjectsFromDB();

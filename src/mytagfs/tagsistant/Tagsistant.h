@@ -20,8 +20,6 @@ namespace tagsistant {
 
         std::string tagsistant_directory;
 
-        soci::session sql;
-
         std::vector<FilenameAndPath> objects;
         std::map<int, std::vector<int>> tagging;
         std::unique_ptr<Tags> tags;

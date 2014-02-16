@@ -43,7 +43,7 @@ void parse_path(const char* path, std::vector<std::string>& before_at,
 		after_at->push_back(std::move(chunks[i]));
 }
 
-int hello_getattr(const char *path, struct stat *stbuf) {
+int mytagfs_getattr(const char *path, struct stat *stbuf) {
 	memset(stbuf, 0, sizeof(struct stat));
 
 	if(strcmp(path, "/") == 0) {
@@ -89,9 +89,8 @@ int hello_getattr(const char *path, struct stat *stbuf) {
 	return -ENOENT;
 }
 
-int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-		off_t offset, struct fuse_file_info *fi)
-{
+int mytagfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+		off_t offset, struct fuse_file_info *fi) {
 	if(strcmp(path, "/") == 0) {
 		filler(buf, ".", NULL, 0);
 		filler(buf, "..", NULL, 0);
@@ -163,7 +162,7 @@ int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	return -ENOENT;
 }
 
-int hello_readlink(const char *path, char *buf, size_t bufsiz) {
+int mytagfs_readlink(const char *path, char *buf, size_t bufsiz) {
 	if(strncmp(path, "/tags/", 6) == 0) {
 		std::vector<std::string> before_at;
 		boost::optional<std::vector<std::string>> after_at;
@@ -231,9 +230,9 @@ int main(int argc, const char* argv[]) {
 		fuse_argv.push_back(v.c_str());
 
 	fuse_operations ops = {0};
-	ops.getattr = hello_getattr;
-	ops.readdir = hello_readdir;
-	ops.readlink = hello_readlink;
+	ops.getattr = mytagfs_getattr;
+	ops.readdir = mytagfs_readdir;
+	ops.readlink = mytagfs_readlink;
 
 	return fuse_main(fuse_argv.size(), const_cast<char**>(fuse_argv.data()), &ops, NULL);
 }
